@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم – معهد بنين المنصورة النموذجي ع/ث</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body { background: #F1F5F9; }
+    #adminLogin { display: flex; }
+    #adminDashboard { display: none; }
+    .admin-topbar-logo { display: flex; align-items: center; gap: .6rem; }
+    .admin-topbar-logo .logo-emblem { width: 36px; height: 36px; font-size: 1rem; }
+    @media(max-width:768px){
+      .admin-sidebar { position: relative; width: 100%; }
+      .admin-main { margin-right: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="adminLogin" style="position:fixed;inset:0;z-index:9999;">
+  <div class="admin-login">
+    <div class="login-card animate-up">
+      <div class="logo-emblem">م</div>
+      <h2>لوحة التحكم</h2>
+      <p>معهد بنين المنصورة النموذجي ع/ث</p>
+
+      <div id="loginError" class="alert alert-error" style="display:none;"></div>
+
+      <form id="loginForm">
+        <div class="form-group" style="text-align:right;">
+          <label for="loginEmail">البريد الإلكتروني</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com" value="admin@azhar.com" required autocomplete="email" />
+        </div>
+        <div class="form-group" style="text-align:right;">
+          <label for="loginPassword">كلمة المرور</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" value="123456" required autocomplete="current-password" />
+        </div>
+        <button type="submit" id="loginBtn" class="btn btn-primary btn-full" style="margin-top:.5rem;">
+          🔐 تسجيل الدخول
+        </button>
+      </form>
+
+      <div style="margin-top:1.5rem;text-align:center;">
+        <a href="index.html" style="font-size:.85rem;color:var(--text-3);">← العودة إلى الموقع</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div id="adminDashboard" class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-head">
+      <div class="logo-emblem" style="margin:0 auto .6rem;">م</div>
+      <h3>لوحة التحكم</h3>
+      <p>معهد بنين المنصورة</p>
+    </div>
+
+    <nav class="admin-nav">
+      <button class="admin-nav-item active" data-panel="news" data-label="إدارة الأخبار">
+        <span class="icon">📰</span> إدارة الأخبار
+      </button>
+      <button class="admin-nav-item" data-panel="downloads" data-label="إدارة التحميلات">
+        <span class="icon">📥</span> إدارة التحميلات
+      </button>
+      <button class="admin-nav-item" data-panel="sheikh" data-label="كلمة شيخ المعهد">
+        <span class="icon">🕌</span> كلمة الشيخ
+      </button>
+      <button class="admin-nav-item" data-panel="about" data-label="نبذة عن المعهد">
+        <span class="icon">ℹ️</span> عن المعهد
+      </button>
+      <button class="admin-nav-item" data-panel="logo" data-label="لوجو الموقع">
+        <span class="icon">🖼️</span> لوجو الموقع
+      </button>
+      <button class="admin-nav-item" data-panel="security" data-label="إعدادات الأمان">
+        <span class="icon">🔒</span> إعدادات الأمان
+      </button>
+      <button class="admin-nav-item" data-panel="supabase" data-label="مفاتيح Supabase">
+        <span class="icon">🔑</span> مفاتيح Supabase
+      </button>
+    </nav>
+
+    <div class="admin-sidebar-footer">
+      <button id="logoutBtn" class="btn btn-ghost btn-full btn-sm">
+        🚪 تسجيل الخروج
+      </button>
+      <div style="margin-top:.75rem;text-align:center;">
+        <a href="index.html" style="font-size:.8rem;color:rgba(255,255,255,.5);">← الموقع الرئيسي</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div class="admin-topbar-logo">
+        <div class="logo-emblem" style="width:36px;height:36px;font-size:1rem;">م</div>
+        <h2 id="panelTitle">إدارة الأخبار</h2>
+      </div>
+      <div class="admin-user">
+        <span id="adminUserEmail"></span>
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">م</div>
+      </div>
+    </div>
+
+    <!-- Alert container -->
+    <div id="adminAlerts" style="position:fixed;top:80px;left:20px;z-index:2000;display:flex;flex-direction:column;gap:.5rem;min-width:300px;max-width:400px;"></div>
+
+    <div class="admin-content">
+
+      <!-- ══════ NEWS PANEL ══════ -->
+      <div id="panel-news" class="admin-panel active">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>📰 قائمة الأخبار</h3>
+            <button id="addNewsBtn" class="btn btn-primary btn-sm">+ إضافة خبر</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>الصورة</th>
+                  <th>العنوان</th>
+                  <th>التصنيف</th>
+                  <th>التاريخ</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="newsTableBody">
+                <tr><td colspan="5" class="text-center"><div class="spinner" style="margin:1rem auto;"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ DOWNLOADS PANEL ══════ -->
+      <div id="panel-downloads" class="admin-panel">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>📥 قائمة التحميلات</h3>
+            <button id="addDlBtn" class="btn btn-primary btn-sm">+ إضافة ملف</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>معاينة</th>
+                  <th>العنوان</th>
+                  <th>النوع</th>
+                  <th>المرحلة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="dlTableBody">
+                <tr><td colspan="5" class="text-center"><div class="spinner" style="margin:1rem auto;"></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ SHEIKH PANEL ══════ -->
+      <div id="panel-sheikh" class="admin-panel">
+        <div class="admin-card" style="max-width:700px;">
+          <div class="admin-card-head">
+            <h3>🕌 كلمة شيخ المعهد</h3>
+          </div>
+          <form id="sheikhForm">
+            <div class="form-group">
+              <label for="sheikhNameInput">اسم الشيخ</label>
+              <input type="text" id="sheikhNameInput" class="form-control" placeholder="اسم فضيلة الشيخ" />
+            </div>
+            <div class="form-group">
+              <label for="sheikhImgInput">رابط صورة الشيخ (Google Drive)</label>
+              <input type="url" id="sheikhImgInput" class="form-control" placeholder="https://drive.google.com/file/d/..." />
+              <div id="sheikhImgPreview" style="margin-top:.5rem;"></div>
+            </div>
+            <div class="form-group">
+              <label for="sheikhMsgInput">نص الكلمة <span style="color:red;">*</span></label>
+              <textarea id="sheikhMsgInput" class="form-control" placeholder="أكتب كلمة الشيخ هنا..." style="min-height:240px;" required></textarea>
+            </div>
+            <button type="submit" id="sheikhSubmitBtn" class="btn btn-primary">💾 حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ══════ ABOUT PANEL ══════ -->
+      <div id="panel-about" class="admin-panel">
+        <div class="admin-card" style="max-width:700px;">
+          <div class="admin-card-head">
+            <h3>ℹ️ نبذة عن المعهد</h3>
+          </div>
+          <form id="aboutForm">
+            <div class="form-group">
+              <label for="aboutContentInput">محتوى الصفحة <span style="color:red;">*</span></label>
+              <textarea id="aboutContentInput" class="form-control" placeholder="أكتب نبذة عن المعهد..." style="min-height:320px;" required></textarea>
+            </div>
+            <button type="submit" id="aboutSubmitBtn" class="btn btn-primary">💾 حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ══════ LOGO PANEL ══════ -->
+      <div id="panel-logo" class="admin-panel">
+        <div class="admin-card" style="max-width:700px;">
+          <div class="admin-card-head">
+            <h3>🖼️ تعديل لوجو الموقع</h3>
+          </div>
+          <form id="logoForm">
+            <div class="form-group">
+              <label for="logoUrlInput">رابط اللوجو (Google Drive)</label>
+              <input type="url" id="logoUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." />
+              <div id="logoPreview" style="margin-top:.75rem;"></div>
+            </div>
+            <button type="submit" id="logoSubmitBtn" class="btn btn-primary">💾 حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ══════ SECURITY PANEL ══════ -->
+      <div id="panel-security" class="admin-panel">
+        <div class="admin-card" style="max-width:700px;">
+          <div class="admin-card-head">
+            <h3>🔒 تغيير كلمة مرور لوحة التحكم</h3>
+          </div>
+          <form id="securityForm">
+            <div class="form-group" style="text-align:right;">
+              <label for="adminEmailInput">البريد الإلكتروني للوحة التحكم</label>
+              <input type="email" id="adminEmailInput" class="form-control" placeholder="admin@azhar.com" required />
+            </div>
+            <div class="form-group" style="text-align:right;">
+              <label for="currentPasswordInput">كلمة المرور الحالية</label>
+              <input type="password" id="currentPasswordInput" class="form-control" placeholder="••••••••" required />
+            </div>
+            <div class="form-group" style="text-align:right;">
+              <label for="newPasswordInput">كلمة المرور الجديدة</label>
+              <input type="password" id="newPasswordInput" class="form-control" placeholder="أدخل كلمة المرور الجديدة" required />
+            </div>
+            <div class="form-group" style="text-align:right;">
+              <label for="confirmPasswordInput">تأكيد كلمة المرور الجديدة</label>
+              <input type="password" id="confirmPasswordInput" class="form-control" placeholder="أعد إدخال كلمة المرور الجديدة" required />
+            </div>
+            <button type="submit" id="securitySubmitBtn" class="btn btn-primary">💾 حفظ التغييرات</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ══════ SUPABASE KEYS PANEL ══════ -->
+      <div id="panel-supabase" class="admin-panel">
+        <div class="admin-card" style="max-width:700px;">
+          <div class="admin-card-head">
+            <h3>🔑 مفاتيح Supabase</h3>
+          </div>
+          <div class="alert" style="display:flex;background:#FEF3C7;color:#92400E;margin-bottom:1rem;">
+            ⚠️ هذه البيانات تُحفظ على هذا المتصفح فقط. بعد الحفظ سيتم إعادة تحميل الصفحة تلقائياً حتى يتم الاتصال بالمشروع الجديد.
+          </div>
+          <form id="supabaseForm">
+            <div class="form-group" style="text-align:right;">
+              <label for="supabaseUrlInput">Project URL</label>
+              <input type="url" id="supabaseUrlInput" class="form-control" placeholder="https://xxxxxxxxxxxx.supabase.co" required />
+            </div>
+            <div class="form-group" style="text-align:right;">
+              <label for="supabaseKeyInput">Anon / Public API Key</label>
+              <textarea id="supabaseKeyInput" class="form-control" style="min-height:90px;font-family:monospace;direction:ltr;text-align:left;" placeholder="eyJhbGciOi..." required></textarea>
+            </div>
+            <button type="submit" id="supabaseSubmitBtn" class="btn btn-primary">💾 حفظ والاتصال</button>
+            <button type="button" id="supabaseResetBtn" class="btn btn-ghost">↺ استعادة الافتراضي</button>
+          </form>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div>
+
+<!-- ═══════════════ NEWS MODAL ═══════════════ -->
+<div class="modal-overlay" id="newsModal" role="dialog" aria-modal="true" aria-labelledby="newsModalTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="newsModalTitle">إضافة خبر جديد</h3>
+      <button class="modal-close" aria-label="إغلاق">✕</button>
+    </div>
+    <form id="newsForm">
+      <div class="form-group">
+        <label for="newsTitleInput">عنوان الخبر</label>
+        <input type="text" id="newsTitleInput" class="form-control" placeholder="عنوان الخبر (اختياري)" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="newsCategoryInput">التصنيف</label>
+          <select id="newsCategoryInput" class="form-control">
+            <option value="أخبار">أخبار</option>
+            <option value="إعلانات">إعلانات</option>
+            <option value="أنشطة">أنشطة</option>
+            <option value="نتائج">نتائج</option>
+            <option value="امتحانات">امتحانات</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="newsStageInput">المرحلة الدراسية (اختياري)</label>
+          <select id="newsStageInput" class="form-control">
+            <option value="">— عام (للجميع) —</option>
+            <option value="أولى إعدادي">أولى إعدادي</option>
+            <option value="ثانية إعدادي">ثانية إعدادي</option>
+            <option value="ثالثة إعدادي">ثالثة إعدادي</option>
+            <option value="أولى ثانوي علمي">أولى ثانوي علمي</option>
+            <option value="أولى ثانوي أدبي">أولى ثانوي أدبي</option>
+            <option value="ثانية ثانوي علمي">ثانية ثانوي علمي</option>
+            <option value="ثانية ثانوي أدبي">ثانية ثانوي أدبي</option>
+            <option value="ثالثة ثانوي علمي">ثالثة ثانوي علمي</option>
+            <option value="ثالثة ثانوي أدبي">ثالثة ثانوي أدبي</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="newsContentInput">محتوى / وصف الخبر</label>
+        <textarea id="newsContentInput" class="form-control" placeholder="اكتب تفاصيل الخبر هنا (اختياري)..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>
+          الصور (روابط Google Drive)
+          <span style="font-size:.78rem;color:var(--text-3);margin-right:.5rem;">يمكنك إضافة أكثر من صورة</span>
+        </label>
+        <div id="newsImgInputs" class="img-inputs-wrap"></div>
+        <button type="button" id="addImgBtn" class="btn btn-ghost btn-sm" style="margin-top:.5rem;">
+          + إضافة صورة أخرى
+        </button>
+        <div class="error-notice" style="margin-top:.5rem;display:none;" id="imgHint">
+          💡 لعرض الصورة من Google Drive: اضغط زر المشاركة ← "أي شخص لديه الرابط" ← انسخ الرابط هنا.
+        </div>
+      </div>
+      <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
+        <button type="button" class="btn btn-ghost" data-close-modal>إلغاء</button>
+        <button type="submit" id="newsSubmitBtn" class="btn btn-primary">💾 حفظ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════ DOWNLOAD MODAL ═══════════════ -->
+<div class="modal-overlay" id="dlModal" role="dialog" aria-modal="true" aria-labelledby="dlModalTitle">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="dlModalTitle">إضافة ملف جديد</h3>
+      <button class="modal-close" aria-label="إغلاق">✕</button>
+    </div>
+    <form id="dlForm">
+      <div class="form-group">
+        <label for="dlTitleInput">عنوان الملف <span style="color:red;">*</span></label>
+        <input type="text" id="dlTitleInput" class="form-control" placeholder="مثال: كتاب اللغة العربية أولى إعدادي" required />
+      </div>
+      <div class="form-group">
+        <label for="dlUrlInput">رابط Google Drive <span style="color:red;">*</span></label>
+        <input type="url" id="dlUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." required />
+        <div id="dlPreviewArea" style="margin-top:.5rem;"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dlTypeInput">نوع الملف</label>
+          <select id="dlTypeInput" class="form-control">
+            <option value="books">📚 كتب</option>
+            <option value="exams">📝 امتحانات</option>
+            <option value="results">🏆 نتائج</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="dlStageInput">المرحلة الدراسية</label>
+          <select id="dlStageInput" class="form-control">
+            <option value="">— عام —</option>
+            <option value="أولى إعدادي">أولى إعدادي</option>
+            <option value="ثانية إعدادي">ثانية إعدادي</option>
+            <option value="ثالثة إعدادي">ثالثة إعدادي</option>
+            <option value="أولى ثانوي علمي">أولى ثانوي علمي</option>
+            <option value="أولى ثانوي أدبي">أولى ثانوي أدبي</option>
+            <option value="ثانية ثانوي علمي">ثانية ثانوي علمي</option>
+            <option value="ثانية ثانوي أدبي">ثانية ثانوي أدبي</option>
+            <option value="ثالثة ثانوي علمي">ثالثة ثانوي علمي</option>
+            <option value="ثالثة ثانوي أدبي">ثالثة ثانوي أدبي</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="dlDescInput">وصف الملف (اختياري)</label>
+        <textarea id="dlDescInput" class="form-control" placeholder="وصف مختصر للملف..." style="min-height:80px;"></textarea>
+      </div>
+      <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
+        <button type="button" class="btn btn-ghost" data-close-modal>إلغاء</button>
+        <button type="submit" id="dlSubmitBtn" class="btn btn-primary">💾 حفظ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
