@@ -23,12 +23,12 @@
     </a>
     <nav class="main-nav" aria-label="القائمة الرئيسية">
       <a href="index.html"     class="nav-link active">الرئيسية</a>
-      <a href="news.html"      class="nav-link">الأخبار</a>
-      <a href="downloads.html" class="nav-link">التحميلات</a>
-      <a href="stages.html"    class="nav-link">المراحل</a>
-      <a href="sheikh.html"    class="nav-link">كلمة الشيخ</a>
-      <a href="about.html"     class="nav-link">عن المعهد</a>
-      <a href="admin.html"     class="nav-link nav-admin">لوحة التحكم</a>
+      <a href="pages/news.html"      class="nav-link">الأخبار</a>
+      <a href="pages/downloads.html" class="nav-link">التحميلات</a>
+      <a href="pages/stages.html"    class="nav-link">المراحل</a>
+      <a href="pages/sheikh.html"    class="nav-link">كلمة الشيخ</a>
+      <a href="pages/about.html"     class="nav-link">عن المعهد</a>
+      <a href="pages/admin.html"     class="nav-link nav-admin">لوحة التحكم</a>
     </nav>
     <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">
       <span></span><span></span><span></span>
@@ -39,12 +39,12 @@
 <!-- Mobile Nav -->
 <nav class="mobile-nav" id="mobileNav">
   <a href="index.html"     class="nav-link active">🏠 الرئيسية</a>
-  <a href="news.html"      class="nav-link">📰 الأخبار</a>
-  <a href="downloads.html" class="nav-link">📥 التحميلات</a>
-  <a href="stages.html"    class="nav-link">📚 المراحل الدراسية</a>
-  <a href="sheikh.html"    class="nav-link">🕌 كلمة شيخ المعهد</a>
-  <a href="about.html"     class="nav-link">ℹ️ عن المعهد</a>
-  <a href="admin.html"     class="nav-link nav-admin">⚙️ لوحة التحكم</a>
+  <a href="pages/news.html"      class="nav-link">📰 الأخبار</a>
+  <a href="pages/downloads.html" class="nav-link">📥 التحميلات</a>
+  <a href="pages/stages.html"    class="nav-link">📚 المراحل الدراسية</a>
+  <a href="pages/sheikh.html"    class="nav-link">🕌 كلمة شيخ المعهد</a>
+  <a href="pages/about.html"     class="nav-link">ℹ️ عن المعهد</a>
+  <a href="pages/admin.html"     class="nav-link nav-admin">⚙️ لوحة التحكم</a>
 </nav>
 
 <!-- ═══════════════ HERO ═══════════════ -->
@@ -65,8 +65,8 @@
       صرح علمي أزهري يُعلي راية العلم والإيمان، ويُعِدّ جيلاً مؤمناً متميزاً
     </p>
     <div class="hero-actions">
-      <a href="news.html"      class="btn btn-primary">📰 آخر الأخبار</a>
-      <a href="downloads.html" class="btn btn-outline">📥 التحميلات</a>
+      <a href="pages/news.html"      class="btn btn-primary">📰 آخر الأخبار</a>
+      <a href="pages/downloads.html" class="btn btn-outline">📥 التحميلات</a>
     </div>
   </div>
   <div class="hero-scroll" aria-hidden="true">
@@ -87,7 +87,7 @@
       <div class="spinner-wrap"><div class="spinner"></div></div>
     </div>
     <div class="text-center" style="margin-top:2.5rem;">
-      <a href="news.html" class="btn btn-ghost">عرض جميع الأخبار ←</a>
+      <a href="pages/news.html" class="btn btn-ghost">عرض جميع الأخبار ←</a>
     </div>
   </div>
 </section>
@@ -104,7 +104,7 @@
       <div class="spinner-wrap"><div class="spinner"></div></div>
     </div>
     <div class="text-center" style="margin-top:2.5rem;">
-      <a href="downloads.html" class="btn btn-green">عرض جميع التحميلات ←</a>
+      <a href="pages/downloads.html" class="btn btn-green">عرض جميع التحميلات ←</a>
     </div>
   </div>
 </section>
@@ -170,7 +170,7 @@
       <div class="spinner-wrap"><div class="spinner"></div></div>
     </div>
     <div class="text-center" style="margin-top:2rem;">
-      <a href="sheikh.html" class="btn btn-ghost">قراءة الكلمة كاملة ←</a>
+      <a href="pages/sheikh.html" class="btn btn-ghost">قراءة الكلمة كاملة ←</a>
     </div>
   </div>
 </section>
@@ -199,11 +199,11 @@
         <h4>روابط سريعة</h4>
         <ul class="footer-links">
           <li><a href="index.html">الصفحة الرئيسية</a></li>
-          <li><a href="news.html">الأخبار</a></li>
-          <li><a href="downloads.html">التحميلات</a></li>
-          <li><a href="stages.html">المراحل الدراسية</a></li>
-          <li><a href="sheikh.html">كلمة شيخ المعهد</a></li>
-          <li><a href="about.html">عن المعهد</a></li>
+          <li><a href="pages/news.html">الأخبار</a></li>
+          <li><a href="pages/downloads.html">التحميلات</a></li>
+          <li><a href="pages/stages.html">المراحل الدراسية</a></li>
+          <li><a href="pages/sheikh.html">كلمة شيخ المعهد</a></li>
+          <li><a href="pages/about.html">عن المعهد</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -310,7 +310,7 @@
             ${truncate(msg.message, 350)}${msg.message.length > 350 ? '…' : ''}
           </div>
           <div style="margin-top:1.25rem;">
-            <a href="sheikh.html" class="btn btn-ghost btn-sm" style="padding:0.4rem 1.25rem; font-size:0.85rem; font-weight:700;">قراءة الكلمة كاملة ←</a>
+            <a href="pages/sheikh.html" class="btn btn-ghost btn-sm" style="padding:0.4rem 1.25rem; font-size:0.85rem; font-weight:700;">قراءة الكلمة كاملة ←</a>
           </div>
         </div>
       </div>
