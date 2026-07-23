@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://azhar1.moazsamh43.workers.dev/sitemap.xml
