@@ -153,8 +153,6 @@ input, textarea, select { font-family: var(--font-main); direction: rtl; }
 .logo-emblem {
   width         : 48px;
   height        : 48px;
-  border-radius : 50%;
-  background    : linear-gradient(135deg, var(--gold), var(--gold-light));
   display       : flex;
   align-items   : center;
   justify-content: center;
@@ -163,7 +161,6 @@ input, textarea, select { font-family: var(--font-main); direction: rtl; }
   color         : var(--green-dark);
   font-weight   : 700;
   flex-shrink   : 0;
-  box-shadow    : 0 2px 12px rgba(201,164,90,.4);
 }
 .logo-text { color: var(--white); }
 .logo-text .line1 { font-size: .7rem; color: var(--gold-light); }
@@ -345,19 +342,16 @@ input, textarea, select { font-family: var(--font-main); direction: rtl; }
 .hero-emblem {
   width         : 140px;
   height        : 140px;
-  border-radius : 50%;
-  background    : linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
   display       : flex;
   align-items   : center;
   justify-content: center;
-  box-shadow    : 0 0 0 12px rgba(201,164,90,.15), 0 0 0 24px rgba(201,164,90,.06), 0 20px 60px rgba(0,0,0,.3);
   animation     : fadeInUp .6s .1s both;
   font-family   : var(--font-serif);
   font-size     : 3.5rem;
   color         : var(--green-dark);
   font-weight   : 700;
 }
-.hero-emblem img { width: 100px; height: 100px; object-fit: contain; border-radius: 50%; }
+.hero-emblem img { width: 100%; height: 100%; object-fit: contain; }
 .hero-title {
   font-family : var(--font-serif);
   font-size   : clamp(2rem, 5vw, 3.5rem);
@@ -1400,8 +1394,7 @@ textarea.form-control { min-height: 120px; resize: vertical; }
 .logo-emblem img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
+  object-fit: contain;
   display: block;
 }
 
