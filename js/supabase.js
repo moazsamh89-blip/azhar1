@@ -382,12 +382,12 @@ async function loadDynamicLogo() {
       
       // Update header/footer logo-emblem
       document.querySelectorAll('.logo-emblem').forEach(el => {
-        el.innerHTML = `<img src="${directUrl}" alt="الشعار" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" referrerpolicy="no-referrer" crossorigin="anonymous" />`;
+        el.innerHTML = `<img src="${directUrl}" alt="الشعار" style="width:100%;height:100%;object-fit:contain;" referrerpolicy="no-referrer" crossorigin="anonymous" />`;
       });
       
       // Update hero emblem
       document.querySelectorAll('.hero-emblem').forEach(el => {
-        el.innerHTML = `<img src="${directUrl}" alt="شعار المعهد" referrerpolicy="no-referrer" crossorigin="anonymous" style="width:100px;height:100px;object-fit:contain;border-radius:50%;" />`;
+        el.innerHTML = `<img src="${directUrl}" alt="شعار المعهد" referrerpolicy="no-referrer" crossorigin="anonymous" style="width:100%;height:100%;object-fit:contain;" />`;
       });
     }
   } catch (e) {
