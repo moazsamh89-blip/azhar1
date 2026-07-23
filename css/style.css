@@ -373,21 +373,6 @@ input, textarea, select { font-family: var(--font-main); direction: rtl; }
   justify-content: center;
   animation : fadeInUp .6s .4s both;
 }
-.hero-scroll {
-  position  : absolute;
-  bottom    : 2rem;
-  left      : 50%;
-  transform : translateX(-50%);
-  color     : rgba(255,255,255,.5);
-  font-size : .8rem;
-  display   : flex;
-  flex-direction: column;
-  align-items: center;
-  gap       : .4rem;
-  animation : bounce 2s ease-in-out infinite;
-}
-.hero-scroll svg { width: 20px; }
-@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
 
 /* ══════════════════════════════════════════
    BUTTONS
@@ -932,56 +917,6 @@ input, textarea, select { font-family: var(--font-main); direction: rtl; }
   width         : 100%;
 }
 .gallery-thumb:hover { opacity: .85; transform: scale(1.03); }
-
-/* ══════════════════════════════════════════
-   FLOATING SOCIAL BUTTONS
-══════════════════════════════════════════ */
-.float-social {
-  position  : fixed;
-  left      : 20px;
-  bottom    : 80px;
-  z-index   : 800;
-  display   : flex;
-  flex-direction: column;
-  gap       : .6rem;
-}
-.float-btn {
-  width         : 48px;
-  height        : 48px;
-  border-radius : 50%;
-  display       : flex;
-  align-items   : center;
-  justify-content: center;
-  color         : var(--white);
-  font-size     : 1.25rem;
-  box-shadow    : var(--shadow-md);
-  transition    : var(--trans);
-  border        : none;
-  position      : relative;
-  overflow      : hidden;
-  text-decoration: none;
-}
-.float-btn::after {
-  content    : attr(data-tooltip);
-  position   : absolute;
-  right      : calc(100% + 10px);
-  top        : 50%;
-  transform  : translateY(-50%);
-  background : var(--black);
-  color      : #fff;
-  padding    : .25rem .65rem;
-  border-radius: var(--radius-sm);
-  font-size  : .78rem;
-  white-space: nowrap;
-  opacity    : 0;
-  pointer-events: none;
-  transition : var(--trans);
-}
-.float-btn:hover::after { opacity: 1; right: calc(100% + 14px); }
-.float-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-lg); }
-.float-fb    { background: #1877F2; }
-.float-tiktok{ background: #000; }
-.float-wa    { background: #25D366; }
 
 /* Back to top */
 .back-to-top {
