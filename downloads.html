@@ -184,6 +184,7 @@
     }
     grid.innerHTML = items.map(d => buildDlCard(d)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+    initReveal();
   }
 
   document.getElementById('typeFilters').addEventListener('click', e => {
