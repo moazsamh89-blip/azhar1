@@ -147,17 +147,41 @@ function truncate(text, max = 120) {
   return text.length > max ? text.slice(0, max) + '…' : text;
 }
 
+/**
+ * Normalize an Arabic stage label so matching doesn't break over things like:
+ * extra/trailing spaces, double spaces, or the same text saved with a
+ * different Unicode composition (e.g. a hamza letter stored as a different
+ * but visually-identical code sequence). This is what makes stage filtering
+ * on the "stages" page tolerant of small inconsistencies in how the stage
+ * name was typed/saved from the control panel over time.
+ */
+function normalizeStage(str) {
+  if (!str) return '';
+  return str.normalize('NFC').trim().replace(/\s+/g, ' ');
+}
+
+/** True if an item's stage should be shown under the given active stage
+ *  (general/no-stage items are shown everywhere; otherwise the normalized
+ *  labels must match). */
+function stageMatches(itemStage, activeStage) {
+  if (!itemStage) return true; // general item — for everyone
+  return normalizeStage(itemStage) === normalizeStage(activeStage);
+}
+
 // =================== NEWS ===================
 
 async function getNews({ limit = null, stage = null, category = null } = {}) {
   let q = sb.from('news').select('*').order('created_at', { ascending: false });
-  if (limit)    q = q.limit(limit);
-  // Show items pinned to this exact stage AND general items (no stage = for everyone)
-  if (stage)    q = q.or(`stage.eq.${stage},stage.is.null`);
+  // Stage matching is done client-side (see stageMatches) instead of a
+  // strict DB-side equality check, so it isn't broken by tiny formatting
+  // differences in how the stage was saved.
   if (category) q = q.eq('category', category);
-  const { data, error } = await q;
+  let { data, error } = await q;
   if (error) { console.error('[Supabase] getNews:', error); return []; }
-  return data || [];
+  data = data || [];
+  if (stage) data = data.filter(n => stageMatches(n.stage, stage));
+  if (limit) data = data.slice(0, limit);
+  return data;
 }
 
 async function getNewsById(id) {
@@ -187,13 +211,16 @@ async function deleteNews(id) {
 
 async function getDownloads({ limit = null, type = null, stage = null } = {}) {
   let q = sb.from('downloads').select('*').order('created_at', { ascending: false });
-  if (limit) q = q.limit(limit);
-  if (type)  q = q.eq('type', type);
-  // Show items pinned to this exact stage AND general items (no stage = for everyone)
-  if (stage) q = q.or(`stage.eq.${stage},stage.is.null`);
-  const { data, error } = await q;
+  if (type) q = q.eq('type', type);
+  // Stage matching is done client-side (see stageMatches) instead of a
+  // strict DB-side equality check, so it isn't broken by tiny formatting
+  // differences in how the stage was saved.
+  let { data, error } = await q;
   if (error) { console.error('[Supabase] getDownloads:', error); return []; }
-  return data || [];
+  data = data || [];
+  if (stage) data = data.filter(d => stageMatches(d.stage, stage));
+  if (limit) data = data.slice(0, limit);
+  return data;
 }
 
 async function createDownload(payload) {
