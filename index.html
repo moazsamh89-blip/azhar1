@@ -308,7 +308,7 @@
     
     const imgUrl = msg.image ? getDriveThumbUrl(msg.image) : '';
     const imgHtml = imgUrl 
-      ? `<img src="${imgUrl}" alt="صورة شيخ المعهد" class="sheikh-home-img" referrerpolicy="no-referrer" crossorigin="anonymous" />`
+      ? `<img src="${imgUrl}" alt="صورة شيخ المعهد" class="sheikh-home-img" referrerpolicy="no-referrer" />`
       : `<div class="sheikh-home-img" style="display:flex;align-items:center;justify-content:center;background:var(--green-light);font-size:4rem;border-radius:50%;width:150px;height:150px;border:4px solid var(--gold);box-shadow:0 8px 20px rgba(0,0,0,0.1);margin:0 auto;">👳</div>`;
 
     wrap.innerHTML = `
