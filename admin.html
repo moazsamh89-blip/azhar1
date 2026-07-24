@@ -182,8 +182,8 @@
               <input type="text" id="sheikhNameInput" class="form-control" placeholder="اسم فضيلة الشيخ" />
             </div>
             <div class="form-group">
-              <label for="sheikhImgInput">رابط صورة الشيخ (Google Drive)</label>
-              <input type="url" id="sheikhImgInput" class="form-control" placeholder="https://drive.google.com/file/d/..." />
+              <label for="sheikhImgInput">رابط صورة الشيخ (Google Drive أو أي رابط صورة مباشر)</label>
+              <input type="url" id="sheikhImgInput" class="form-control" placeholder="https://drive.google.com/file/d/... أو https://i.postimg.cc/..." />
               <div id="sheikhImgPreview" style="margin-top:.5rem;"></div>
             </div>
             <div class="form-group">
@@ -219,8 +219,8 @@
           </div>
           <form id="logoForm">
             <div class="form-group">
-              <label for="logoUrlInput">رابط اللوجو (Google Drive)</label>
-              <input type="url" id="logoUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." />
+              <label for="logoUrlInput">رابط اللوجو (Google Drive أو أي رابط صورة مباشر)</label>
+              <input type="url" id="logoUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/... أو https://i.postimg.cc/..." />
               <div id="logoPreview" style="margin-top:.75rem;"></div>
             </div>
             <button type="submit" id="logoSubmitBtn" class="btn btn-primary">💾 حفظ التغييرات</button>
@@ -329,7 +329,7 @@
       </div>
       <div class="form-group">
         <label>
-          الصور (روابط Google Drive)
+          الصور (روابط الصور)
           <span style="font-size:.78rem;color:var(--text-3);margin-right:.5rem;">يمكنك إضافة أكثر من صورة</span>
         </label>
         <div id="newsImgInputs" class="img-inputs-wrap"></div>
@@ -337,7 +337,7 @@
           + إضافة صورة أخرى
         </button>
         <div class="error-notice" style="margin-top:.5rem;display:none;" id="imgHint">
-          💡 لعرض الصورة من Google Drive: اضغط زر المشاركة ← "أي شخص لديه الرابط" ← انسخ الرابط هنا.
+          💡 يمكنك استخدام رابط من Google Drive (اضغط زر المشاركة ← "أي شخص لديه الرابط" ← انسخ الرابط هنا) أو رابط مباشر من موقع رفع صور مثل i.postimg.cc.
         </div>
       </div>
       <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1rem;">
@@ -361,9 +361,17 @@
         <input type="text" id="dlTitleInput" class="form-control" placeholder="مثال: كتاب اللغة العربية الأول الإعدادي" required />
       </div>
       <div class="form-group">
-        <label for="dlUrlInput">رابط Google Drive <span style="color:red;">*</span></label>
-        <input type="url" id="dlUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/..." required />
+        <label for="dlUrlInput">رابط الملف (Google Drive أو أي رابط PDF/صورة مباشر) <span style="color:red;">*</span></label>
+        <input type="url" id="dlUrlInput" class="form-control" placeholder="https://drive.google.com/file/d/... أو رابط PDF مباشر" required />
         <div id="dlPreviewArea" style="margin-top:.5rem;"></div>
+      </div>
+      <div class="form-group">
+        <label for="dlCoverInput">رابط صورة الغلاف (اختياري — لعرض غلاف مع الكتاب/الامتحان)</label>
+        <input type="url" id="dlCoverInput" class="form-control" placeholder="https://i.postimg.cc/.../cover.jpg أو رابط Google Drive" />
+        <div id="dlCoverPreview" style="margin-top:.5rem;"></div>
+        <div class="error-notice" style="margin-top:.5rem;">
+          💡 إذا كان الملف نفسه ملف PDF (كتاب أو امتحان)، ضع هنا رابط صورة الغلاف حتى تظهر في صفحات المراحل والتحميلات — بدونها لن يظهر أي غلاف لملفات الـ PDF.
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
