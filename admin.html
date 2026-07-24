@@ -35,11 +35,11 @@
       <form id="loginForm">
         <div class="form-group" style="text-align:right;">
           <label for="loginEmail">البريد الإلكتروني</label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com" value="admin@azhar.com" required autocomplete="email" />
+          <input type="email" id="loginEmail" class="form-control" placeholder="admin@example.com" required autocomplete="email" />
         </div>
         <div class="form-group" style="text-align:right;">
           <label for="loginPassword">كلمة المرور</label>
-          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" value="123456" required autocomplete="current-password" />
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required autocomplete="current-password" />
         </div>
         <button type="submit" id="loginBtn" class="btn btn-primary btn-full" style="margin-top:.5rem;">
           🔐 تسجيل الدخول
@@ -131,12 +131,13 @@
                   <th>الصورة</th>
                   <th>العنوان</th>
                   <th>التصنيف</th>
+                  <th>المرحلة</th>
                   <th>التاريخ</th>
                   <th>إجراءات</th>
                 </tr>
               </thead>
               <tbody id="newsTableBody">
-                <tr><td colspan="5" class="text-center"><div class="spinner" style="margin:1rem auto;"></div></td></tr>
+                <tr><td colspan="6" class="text-center"><div class="spinner" style="margin:1rem auto;"></div></td></tr>
               </tbody>
             </table>
           </div>
@@ -310,15 +311,15 @@
           <label for="newsStageInput">المرحلة الدراسية (اختياري)</label>
           <select id="newsStageInput" class="form-control">
             <option value="">— عام (للجميع) —</option>
-            <option value="أولى إعدادي">أولى إعدادي</option>
-            <option value="ثانية إعدادي">ثانية إعدادي</option>
-            <option value="ثالثة إعدادي">ثالثة إعدادي</option>
-            <option value="أولى ثانوي علمي">أولى ثانوي علمي</option>
-            <option value="أولى ثانوي أدبي">أولى ثانوي أدبي</option>
-            <option value="ثانية ثانوي علمي">ثانية ثانوي علمي</option>
-            <option value="ثانية ثانوي أدبي">ثانية ثانوي أدبي</option>
-            <option value="ثالثة ثانوي علمي">ثالثة ثانوي علمي</option>
-            <option value="ثالثة ثانوي أدبي">ثالثة ثانوي أدبي</option>
+            <option value="الأول الإعدادي">الأول الإعدادي</option>
+            <option value="الثاني الإعدادي">الثاني الإعدادي</option>
+            <option value="الثالث الإعدادي">الثالث الإعدادي</option>
+            <option value="الأول الثانوي علمي">الأول الثانوي علمي</option>
+            <option value="الأول الثانوي أدبي">الأول الثانوي أدبي</option>
+            <option value="الثاني الثانوي علمي">الثاني الثانوي علمي</option>
+            <option value="الثاني الثانوي أدبي">الثاني الثانوي أدبي</option>
+            <option value="الثالث الثانوي علمي">الثالث الثانوي علمي</option>
+            <option value="الثالث الثانوي أدبي">الثالث الثانوي أدبي</option>
           </select>
         </div>
       </div>
@@ -357,7 +358,7 @@
     <form id="dlForm">
       <div class="form-group">
         <label for="dlTitleInput">عنوان الملف <span style="color:red;">*</span></label>
-        <input type="text" id="dlTitleInput" class="form-control" placeholder="مثال: كتاب اللغة العربية أولى إعدادي" required />
+        <input type="text" id="dlTitleInput" class="form-control" placeholder="مثال: كتاب اللغة العربية الأول الإعدادي" required />
       </div>
       <div class="form-group">
         <label for="dlUrlInput">رابط Google Drive <span style="color:red;">*</span></label>
@@ -377,15 +378,15 @@
           <label for="dlStageInput">المرحلة الدراسية</label>
           <select id="dlStageInput" class="form-control">
             <option value="">— عام —</option>
-            <option value="أولى إعدادي">أولى إعدادي</option>
-            <option value="ثانية إعدادي">ثانية إعدادي</option>
-            <option value="ثالثة إعدادي">ثالثة إعدادي</option>
-            <option value="أولى ثانوي علمي">أولى ثانوي علمي</option>
-            <option value="أولى ثانوي أدبي">أولى ثانوي أدبي</option>
-            <option value="ثانية ثانوي علمي">ثانية ثانوي علمي</option>
-            <option value="ثانية ثانوي أدبي">ثانية ثانوي أدبي</option>
-            <option value="ثالثة ثانوي علمي">ثالثة ثانوي علمي</option>
-            <option value="ثالثة ثانوي أدبي">ثالثة ثانوي أدبي</option>
+            <option value="الأول الإعدادي">الأول الإعدادي</option>
+            <option value="الثاني الإعدادي">الثاني الإعدادي</option>
+            <option value="الثالث الإعدادي">الثالث الإعدادي</option>
+            <option value="الأول الثانوي علمي">الأول الثانوي علمي</option>
+            <option value="الأول الثانوي أدبي">الأول الثانوي أدبي</option>
+            <option value="الثاني الثانوي علمي">الثاني الثانوي علمي</option>
+            <option value="الثاني الثانوي أدبي">الثاني الثانوي أدبي</option>
+            <option value="الثالث الثانوي علمي">الثالث الثانوي علمي</option>
+            <option value="الثالث الثانوي أدبي">الثالث الثانوي أدبي</option>
           </select>
         </div>
       </div>
