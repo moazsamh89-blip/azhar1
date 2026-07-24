@@ -279,6 +279,7 @@
     }
     grid.innerHTML = news.map(n => buildNewsCard(n)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+    initReveal();
   }
 
   async function loadStageDlByType(type, gridId, emptyLabel) {
@@ -291,6 +292,7 @@
     }
     grid.innerHTML = items.map(d => buildDlCard(d)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+    initReveal();
   }
 
   const loadStageDl = () => loadStageDlByType('books', 'stageDlGrid', 'لا توجد كتب لهذه المرحلة');
@@ -311,6 +313,7 @@
     }
     grid.innerHTML = dlItems.map(d => buildDlCard(d)).join('') + newsItems.map(n => buildNewsCard(n)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+    initReveal();
   }
 
   // Results, same idea as exams: merge "التحميلات" (downloads, type=results,
@@ -329,6 +332,7 @@
     }
     grid.innerHTML = dlItems.map(d => buildDlCard(d)).join('') + newsItems.map(n => buildNewsCard(n)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+    initReveal();
   }
 
   // Stage card clicks
