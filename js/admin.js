@@ -13,6 +13,8 @@ async function checkAuth() {
   if (!user) {
     document.getElementById('adminLogin').style.display = 'flex';
     document.getElementById('adminDashboard').style.display = 'none';
+    const loginEmail = document.getElementById('loginEmail');
+    if (loginEmail && !loginEmail.value) loginEmail.value = await getAdminEmail();
   } else {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminDashboard').style.display = 'flex';
@@ -88,7 +90,7 @@ async function loadNewsPanel() {
   tbody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="spinner" style="margin:1rem auto;"></div></td></tr>';
   const news = await getNews();
   if (!news.length) {
-    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><div class="icon">📰</div><h3>لا توجد أخبار</h3></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="icon">📰</div><h3>لا توجد أخبار</h3></div></td></tr>';
     return;
   }
   tbody.innerHTML = news.map(n => {
@@ -98,6 +100,7 @@ async function loadNewsPanel() {
       <td>${thumb}</td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escAdm(n.title)}</td>
       <td>${escAdm(n.category || '—')}</td>
+      <td>${escAdm(n.stage || '—')}</td>
       <td>${formatDateAr(n.created_at)}</td>
       <td>
         <div class="tbl-actions">
@@ -517,27 +520,20 @@ document.getElementById('supabaseResetBtn')?.addEventListener('click', () => {
 // ═══════════════════════════════════════════
 //  SECURITY PANEL
 // ═══════════════════════════════════════════
-function loadSecurityPanel() {
-  const creds = getAdminCredentials();
+async function loadSecurityPanel() {
   const emailInput = document.getElementById('adminEmailInput');
   if (emailInput) {
-    emailInput.value = creds.email;
+    emailInput.value = await getAdminEmail();
   }
 }
 
-document.getElementById('securityForm')?.addEventListener('submit', e => {
+document.getElementById('securityForm')?.addEventListener('submit', async e => {
   e.preventDefault();
   const emailInput = document.getElementById('adminEmailInput');
   const currentPass = document.getElementById('currentPasswordInput').value;
   const newPass = document.getElementById('newPasswordInput').value;
   const confirmPass = document.getElementById('confirmPasswordInput').value;
   const btn = document.getElementById('securitySubmitBtn');
-
-  const creds = getAdminCredentials();
-  if (currentPass !== creds.password) {
-    showAdminAlert('⚠️ كلمة المرور الحالية غير صحيحة', 'error');
-    return;
-  }
 
   if (newPass !== confirmPass) {
     showAdminAlert('⚠️ كلمة المرور الجديدة وتأكيدها غير متطابقين', 'error');
@@ -553,15 +549,16 @@ document.getElementById('securityForm')?.addEventListener('submit', e => {
   btn.textContent = 'جارٍ الحفظ...';
 
   try {
-    setAdminCredentials(emailInput.value.trim(), newPass);
+    const currentUser = await getCurrentUser();
+    await changeAdminCredentials(currentUser.email, currentPass, emailInput.value.trim(), newPass);
     showAdminAlert('تم تغيير بيانات الدخول بنجاح ✅', 'success');
-    
+
     // Clear inputs
     document.getElementById('currentPasswordInput').value = '';
     document.getElementById('newPasswordInput').value = '';
     document.getElementById('confirmPasswordInput').value = '';
   } catch (ex) {
-    showAdminAlert('خطأ: ' + ex.message, 'error');
+    showAdminAlert('⚠️ ' + ex.message, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = 'حفظ التغييرات';
