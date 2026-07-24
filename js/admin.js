@@ -261,9 +261,9 @@ async function loadDlPanel() {
     return;
   }
   tbody.innerHTML = items.map(d => {
-    const isImg = isImageUrl(d.file_url);
-    const thumb = isImg
-      ? `<img src="${getDriveImageUrl(d.file_url)}" alt="صورة" referrerpolicy="no-referrer" onerror="this.style.display='none'" />`
+    const coverSrc = d.cover || (isImageUrl(d.file_url) ? d.file_url : '');
+    const thumb = coverSrc
+      ? `<img src="${getDriveImageUrl(coverSrc)}" alt="صورة" referrerpolicy="no-referrer" onerror="this.style.display='none'" />`
       : `<span style="font-size:1.5rem;">📄</span>`;
     return `<tr>
       <td>${thumb}</td>
@@ -290,6 +290,9 @@ function openDlModal(mode = 'add', data = null) {
   const fileUrl = data?.file_url || '';
   document.getElementById('dlUrlInput').value           = fileUrl;
   updateDlPreview(fileUrl);
+  const coverUrl = data?.cover || '';
+  document.getElementById('dlCoverInput').value         = coverUrl;
+  updateCoverPreview(coverUrl);
   openModal('dlModal');
 }
 
@@ -303,7 +306,16 @@ function updateDlPreview(url) {
   }
 }
 
+/** Preview for the dedicated cover-image field — always treated as an image, regardless of host */
+function updateCoverPreview(url) {
+  const prev = document.getElementById('dlCoverPreview');
+  if (!prev) return;
+  if (!url) { prev.innerHTML = ''; return; }
+  prev.innerHTML = `<img src="${getDriveImageUrl(url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer" onerror="this.style.display='none'" alt="معاينة الغلاف" />`;
+}
+
 document.getElementById('dlUrlInput')?.addEventListener('input', e => updateDlPreview(e.target.value.trim()));
+document.getElementById('dlCoverInput')?.addEventListener('input', e => updateCoverPreview(e.target.value.trim()));
 
 document.getElementById('dlForm')?.addEventListener('submit', async e => {
   e.preventDefault();
@@ -315,6 +327,7 @@ document.getElementById('dlForm')?.addEventListener('submit', async e => {
     title      : document.getElementById('dlTitleInput').value.trim(),
     description: document.getElementById('dlDescInput').value.trim()  || null,
     file_url   : document.getElementById('dlUrlInput').value.trim(),
+    cover      : document.getElementById('dlCoverInput').value.trim() || null,
     type       : document.getElementById('dlTypeInput').value         || 'books',
     stage      : document.getElementById('dlStageInput').value        || null,
   };
