@@ -63,11 +63,15 @@ function isPdfUrl(url) {
  *   https://drive.google.com/file/d/FILE_ID/view
  *   https://drive.google.com/open?id=FILE_ID
  *   https://drive.google.com/uc?id=FILE_ID
+ *
+ * `size` (optional) appends a Google image-serving size param, e.g. "w1920" or "w400".
+ * Leaving it out lets Google serve its own default (usually low-res), so callers
+ * that need real quality should pass an explicit size.
  */
-function getDriveImageUrl(url) {
+function getDriveImageUrl(url, size) {
   if (!url) return '';
   if (url.includes('lh3.googleusercontent.com') && !url.includes('/d/')) return url;
-  
+
   let fileId = '';
   const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   if (match) {
@@ -78,11 +82,21 @@ function getDriveImageUrl(url) {
       fileId = matchId[1];
     }
   }
-  
+
   if (fileId) {
-    return `https://lh3.googleusercontent.com/d/${fileId}`;
+    return `https://lh3.googleusercontent.com/d/${fileId}${size ? '=' + size : ''}`;
   }
   return url;
+}
+
+/** Full/original-resolution image URL — used when the image is opened/enlarged (lightbox) */
+function getDriveFullImageUrl(url) {
+  return getDriveImageUrl(url, 's0'); // s0 = Google serves the image at its original, unbounded resolution
+}
+
+/** Sharp image URL — used for card/cover thumbnails (still high-res, sized for retina screens) */
+function getDriveThumbUrl(url) {
+  return getDriveImageUrl(url, 'w1600');
 }
 
 /** Get a Google Drive file open URL (for viewer) */
@@ -138,7 +152,8 @@ function truncate(text, max = 120) {
 async function getNews({ limit = null, stage = null, category = null } = {}) {
   let q = sb.from('news').select('*').order('created_at', { ascending: false });
   if (limit)    q = q.limit(limit);
-  if (stage)    q = q.eq('stage', stage);
+  // Show items pinned to this exact stage AND general items (no stage = for everyone)
+  if (stage)    q = q.or(`stage.eq.${stage},stage.is.null`);
   if (category) q = q.eq('category', category);
   const { data, error } = await q;
   if (error) { console.error('[Supabase] getNews:', error); return []; }
@@ -174,7 +189,8 @@ async function getDownloads({ limit = null, type = null, stage = null } = {}) {
   let q = sb.from('downloads').select('*').order('created_at', { ascending: false });
   if (limit) q = q.limit(limit);
   if (type)  q = q.eq('type', type);
-  if (stage) q = q.eq('stage', stage);
+  // Show items pinned to this exact stage AND general items (no stage = for everyone)
+  if (stage) q = q.or(`stage.eq.${stage},stage.is.null`);
   const { data, error } = await q;
   if (error) { console.error('[Supabase] getDownloads:', error); return []; }
   return data || [];
@@ -247,49 +263,71 @@ async function upsertAboutPage(payload) {
 
 const LOCAL_AUTH_KEY = 'azhar_admin_session';
 
-// Helper to get allowed credentials
-function getAdminCredentials() {
-  const email = localStorage.getItem('admin_email') || 'admin@azhar.com';
-  const password = localStorage.getItem('admin_password') || '123456';
-  return { email: email.trim(), password: password };
+/**
+ * Admin credentials now live in Supabase (table `admin_credentials`), checked
+ * through SECURITY DEFINER functions (`admin_login` / `admin_change_password`)
+ * so the anon key can never read the password directly. This means a password
+ * change takes effect everywhere immediately — it's no longer tied to a single
+ * browser's localStorage (which was the cause of "the old password still works").
+ */
+
+/** Fetch the current admin email (safe to expose; password itself is never returned) */
+async function getAdminEmail() {
+  try {
+    const { data, error } = await sb.rpc('get_admin_email');
+    if (error) throw error;
+    return data || 'admin@azhar.com';
+  } catch (e) {
+    console.error('[Supabase] getAdminEmail:', e);
+    return 'admin@azhar.com';
+  }
 }
 
-// Helper to set new credentials (used by the security panel)
-function setAdminCredentials(email, password) {
-  localStorage.setItem('admin_email', email.trim());
-  localStorage.setItem('admin_password', password);
-  
-  // If logged in, update current session email
+async function signIn(email, password) {
+  const { data: ok, error } = await sb.rpc('admin_login', {
+    p_email: email.trim(),
+    p_password: password
+  });
+  if (error) throw error;
+  if (!ok) throw new Error('بريد إلكتروني أو كلمة مرور خاطئة');
+
+  const session = {
+    user: {
+      email: email.trim(),
+      id: 'local-admin-id'
+    }
+  };
+  localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(session));
+  if (window._authStateCallback) {
+    window._authStateCallback('SIGNED_IN', session);
+  }
+  return session;
+}
+
+/** Change admin email/password. Verifies the current password server-side first. */
+async function changeAdminCredentials(currentEmail, currentPassword, newEmail, newPassword) {
+  const { data: ok, error } = await sb.rpc('admin_change_password', {
+    p_current_email: currentEmail.trim(),
+    p_current_password: currentPassword,
+    p_new_email: newEmail.trim(),
+    p_new_password: newPassword
+  });
+  if (error) throw error;
+  if (!ok) throw new Error('كلمة المرور الحالية غير صحيحة');
+
+  // Keep the active session's displayed email in sync
   const sessionStr = localStorage.getItem(LOCAL_AUTH_KEY);
   if (sessionStr) {
     try {
       const session = JSON.parse(sessionStr);
-      session.user.email = email.trim();
+      session.user.email = newEmail.trim();
       localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(session));
       if (window._authStateCallback) {
         window._authStateCallback('SIGNED_IN', session);
       }
     } catch (e) {}
   }
-}
-
-async function signIn(email, password) {
-  const creds = getAdminCredentials();
-  if (email.trim().toLowerCase() === creds.email.toLowerCase() && password === creds.password) {
-    const session = {
-      user: {
-        email: creds.email,
-        id: 'local-admin-id'
-      }
-    };
-    localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(session));
-    if (window._authStateCallback) {
-      window._authStateCallback('SIGNED_IN', session);
-    }
-    return session;
-  } else {
-    throw new Error('بريد إلكتروني أو كلمة مرور خاطئة');
-  }
+  return true;
 }
 
 async function signOut() {
@@ -378,7 +416,7 @@ async function loadDynamicLogo() {
   try {
     const logoUrl = await getLogoUrl();
     if (logoUrl) {
-      const directUrl = getDriveImageUrl(logoUrl);
+      const directUrl = getDriveImageUrl(logoUrl, 'w512');
       
       // Update header/footer logo-emblem
       document.querySelectorAll('.logo-emblem').forEach(el => {
