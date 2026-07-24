@@ -96,7 +96,7 @@ function getDriveFullImageUrl(url) {
 
 /** Sharp image URL — used for card/cover thumbnails (still high-res, sized for retina screens) */
 function getDriveThumbUrl(url) {
-  return getDriveImageUrl(url, 'w1600');
+  return getDriveImageUrl(url, 'w2000');
 }
 
 /** Get a Google Drive file open URL (for viewer) */
@@ -288,7 +288,12 @@ async function upsertAboutPage(payload) {
 
 // =================== AUTH ===================
 
-const LOCAL_AUTH_KEY = 'azhar_admin_session';
+const LOCAL_AUTH_KEY       = 'azhar_admin_session';
+// Stores the "session version" (a timestamp bumped every time the password
+// changes) that this browser tab last saw. Used to detect that the password
+// was changed elsewhere (another tab/device) so this session can be force-
+// logged-out instead of continuing to work with a now-stale login.
+const SESSION_VERSION_KEY  = 'azhar_admin_session_version';
 
 /**
  * Admin credentials now live in Supabase (table `admin_credentials`), checked
@@ -310,6 +315,35 @@ async function getAdminEmail() {
   }
 }
 
+/**
+ * Reads the shared "session version" from Supabase — a timestamp that gets
+ * bumped every time the admin password changes (see bumpSessionVersion).
+ * Requires the `get_session_version` SQL function — see
+ * supabase/session_version.sql for the migration that adds it.
+ */
+async function getSessionVersion() {
+  try {
+    const { data, error } = await sb.rpc('get_session_version');
+    if (error) throw error;
+    return data || null;
+  } catch (e) {
+    console.error('[Supabase] getSessionVersion:', e);
+    return null;
+  }
+}
+
+/** Bumps the shared session version, invalidating every other logged-in tab/device. */
+async function bumpSessionVersion() {
+  try {
+    const { data, error } = await sb.rpc('bump_session_version');
+    if (error) throw error;
+    return data || null;
+  } catch (e) {
+    console.error('[Supabase] bumpSessionVersion:', e);
+    return null;
+  }
+}
+
 async function signIn(email, password) {
   const { data: ok, error } = await sb.rpc('admin_login', {
     p_email: email.trim(),
@@ -325,6 +359,12 @@ async function signIn(email, password) {
     }
   };
   localStorage.setItem(LOCAL_AUTH_KEY, JSON.stringify(session));
+
+  // Remember the session version active at login time, so we can later tell
+  // whether the password has since been changed elsewhere.
+  const version = await getSessionVersion();
+  if (version) localStorage.setItem(SESSION_VERSION_KEY, version);
+
   if (window._authStateCallback) {
     window._authStateCallback('SIGNED_IN', session);
   }
@@ -342,6 +382,12 @@ async function changeAdminCredentials(currentEmail, currentPassword, newEmail, n
   if (error) throw error;
   if (!ok) throw new Error('كلمة المرور الحالية غير صحيحة');
 
+  // Invalidate every other tab/device that's currently logged into the admin
+  // panel — the next time they check (see watchSessionVersion) they'll be
+  // signed out automatically and asked to log back in with the new password.
+  const newVersion = await bumpSessionVersion();
+  if (newVersion) localStorage.setItem(SESSION_VERSION_KEY, newVersion);
+
   // Keep the active session's displayed email in sync
   const sessionStr = localStorage.getItem(LOCAL_AUTH_KEY);
   if (sessionStr) {
@@ -357,8 +403,24 @@ async function changeAdminCredentials(currentEmail, currentPassword, newEmail, n
   return true;
 }
 
+/**
+ * Checks whether the password has been changed elsewhere since this tab
+ * logged in, and if so, signs this tab out automatically. Safe to call
+ * repeatedly (polling, tab focus, storage events, etc).
+ */
+async function watchSessionVersion() {
+  const localVersion = localStorage.getItem(SESSION_VERSION_KEY);
+  if (!localVersion) return; // not logged in / nothing to compare against
+  const liveVersion = await getSessionVersion();
+  if (liveVersion && liveVersion !== localVersion) {
+    localStorage.removeItem(SESSION_VERSION_KEY);
+    await signOut();
+  }
+}
+
 async function signOut() {
   localStorage.removeItem(LOCAL_AUTH_KEY);
+  localStorage.removeItem(SESSION_VERSION_KEY);
   if (window._authStateCallback) {
     window._authStateCallback('SIGNED_OUT', null);
   }
@@ -447,12 +509,12 @@ async function loadDynamicLogo() {
       
       // Update header/footer logo-emblem
       document.querySelectorAll('.logo-emblem').forEach(el => {
-        el.innerHTML = `<img src="${directUrl}" alt="الشعار" style="width:100%;height:100%;object-fit:contain;" referrerpolicy="no-referrer" crossorigin="anonymous" />`;
+        el.innerHTML = `<img src="${directUrl}" alt="الشعار" style="width:100%;height:100%;object-fit:contain;" referrerpolicy="no-referrer" />`;
       });
       
       // Update hero emblem
       document.querySelectorAll('.hero-emblem').forEach(el => {
-        el.innerHTML = `<img src="${directUrl}" alt="شعار المعهد" referrerpolicy="no-referrer" crossorigin="anonymous" style="width:100%;height:100%;object-fit:contain;" />`;
+        el.innerHTML = `<img src="${directUrl}" alt="شعار المعهد" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:contain;" />`;
       });
     }
   } catch (e) {
