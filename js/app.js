@@ -76,7 +76,7 @@ function openLightbox(images, startIndex = 0) {
 }
 
 function showLbImage() {
-  const url = getDriveImageUrl(lbImages[lbIndex]);
+  const url = getDriveFullImageUrl(lbImages[lbIndex]);
   lbImg.src = url;
   lbImg.alt = `صورة ${lbIndex + 1}`;
   if (lbCounter) lbCounter.textContent = lbImages.length > 1 ? `${lbIndex + 1} / ${lbImages.length}` : '';
@@ -125,11 +125,11 @@ function buildNewsCard(n) {
 
   let imgHtml = '';
   if (hasImg) {
-    const displayUrl = getDriveImageUrl(images[0]);
+    const displayUrl = getDriveThumbUrl(images[0]);
     imgHtml = `
       <div class="news-img-wrap" data-lb="${imgUrls}" data-lb-index="0" role="button" tabindex="0" aria-label="فتح الصورة">
         <img src="${displayUrl}" alt="${escHtml(n.title)}" loading="lazy"
-             referrerpolicy="no-referrer" crossorigin="anonymous"
+             referrerpolicy="no-referrer"
              onerror="this.parentElement.innerHTML='<div class=\\'news-img-placeholder\\'>📰</div>'" />
         <span class="news-category">${escHtml(n.category || 'أخبار')}</span>
         ${images.length > 1 ? `<span class="news-img-count">🖼 ${images.length}</span>` : ''}
@@ -164,17 +164,6 @@ function buildNewsCard(n) {
         ${n.title ? `<h3 class="news-title">${escHtml(n.title)}</h3>` : ''}
         ${contentHtml}
       </div>
-      ${hasImg && images.length > 1 ? `
-        <div style="padding:0 1.25rem .75rem;">
-          <div class="gallery">
-            ${images.slice(0,4).map((url, i) => `
-              <img src="${getDriveImageUrl(url)}" alt="صورة ${i+1}"
-                   class="gallery-thumb"
-                   data-lb="${imgUrls}" data-lb-index="${i}"
-                   loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous"
-                   onerror="this.style.display='none'" />`).join('')}
-          </div>
-        </div>` : ''}
     </article>`;
 }
 
@@ -199,7 +188,8 @@ function toggleReadMore(btn) {
  */
 function buildDlCard(d) {
   const url       = d.file_url || '';
-  const imgUrl    = getDriveImageUrl(url);
+  const thumbUrl  = getDriveThumbUrl(url);
+  const fullUrl   = getDriveFullImageUrl(url);
   const openUrl   = getDriveOpenUrl(url);
   const dlUrl     = getDriveDownloadUrl(url);
   const isImg     = isImageUrl(url);
@@ -211,9 +201,9 @@ function buildDlCard(d) {
   let mediaHtml = '';
   if (isImg) {
     mediaHtml = `
-      <img src="${imgUrl}" alt="${escHtml(d.title)}" class="dl-card-img"
-           data-lb='["${imgUrl}"]' data-lb-index="0"
-           loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous"
+      <img src="${thumbUrl}" alt="${escHtml(d.title)}" class="dl-card-img"
+           data-lb='["${fullUrl}"]' data-lb-index="0"
+           loading="lazy" referrerpolicy="no-referrer"
            onerror="this.style.display='none'" />`;
   }
 
@@ -240,7 +230,7 @@ function buildDlCard(d) {
       </div>
       <div class="dl-actions">
         ${isImg
-          ? `<button class="btn btn-green btn-sm" data-lb='["${imgUrl}"]' data-lb-index="0">🔍 عرض الصورة</button>`
+          ? `<button class="btn btn-green btn-sm" data-lb='["${fullUrl}"]' data-lb-index="0">🔍 عرض الصورة</button>`
           : `<a href="${openUrl}" target="_blank" rel="noopener" class="btn btn-green btn-sm">📂 فتح الملف</a>
              <a href="${dlUrl}"  target="_blank" rel="noopener" class="btn btn-ghost btn-sm">⬇️ تحميل</a>`}
       </div>
