@@ -102,49 +102,49 @@
 
     <!-- Stage cards -->
     <div class="stages-grid" id="stagesGrid">
-      <button class="stage-card" data-stage="أولى إعدادي">
+      <button class="stage-card" data-stage="الأول الإعدادي">
         <div class="stage-icon">📗</div>
-        <div class="stage-name">أولى إعدادي</div>
+        <div class="stage-name">الأول الإعدادي</div>
         <div class="stage-level">المرحلة الإعدادية</div>
       </button>
-      <button class="stage-card" data-stage="ثانية إعدادي">
+      <button class="stage-card" data-stage="الثاني الإعدادي">
         <div class="stage-icon">📘</div>
-        <div class="stage-name">ثانية إعدادي</div>
+        <div class="stage-name">الثاني الإعدادي</div>
         <div class="stage-level">المرحلة الإعدادية</div>
       </button>
-      <button class="stage-card" data-stage="ثالثة إعدادي">
+      <button class="stage-card" data-stage="الثالث الإعدادي">
         <div class="stage-icon">📙</div>
-        <div class="stage-name">ثالثة إعدادي</div>
+        <div class="stage-name">الثالث الإعدادي</div>
         <div class="stage-level">المرحلة الإعدادية</div>
       </button>
-      <button class="stage-card" data-stage="أولى ثانوي علمي">
+      <button class="stage-card" data-stage="الأول الثانوي علمي">
         <div class="stage-icon">📕</div>
-        <div class="stage-name">أولى ثانوي علمي</div>
+        <div class="stage-name">الأول الثانوي علمي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
-      <button class="stage-card" data-stage="أولى ثانوي أدبي">
+      <button class="stage-card" data-stage="الأول الثانوي أدبي">
         <div class="stage-icon">📖</div>
-        <div class="stage-name">أولى ثانوي أدبي</div>
+        <div class="stage-name">الأول الثانوي أدبي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
-      <button class="stage-card" data-stage="ثانية ثانوي علمي">
+      <button class="stage-card" data-stage="الثاني الثانوي علمي">
         <div class="stage-icon">📓</div>
-        <div class="stage-name">ثانية ثانوي علمي</div>
+        <div class="stage-name">الثاني الثانوي علمي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
-      <button class="stage-card" data-stage="ثانية ثانوي أدبي">
+      <button class="stage-card" data-stage="الثاني الثانوي أدبي">
         <div class="stage-icon">📝</div>
-        <div class="stage-name">ثانية ثانوي أدبي</div>
+        <div class="stage-name">الثاني الثانوي أدبي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
-      <button class="stage-card" data-stage="ثالثة ثانوي علمي">
+      <button class="stage-card" data-stage="الثالث الثانوي علمي">
         <div class="stage-icon">🔬</div>
-        <div class="stage-name">ثالثة ثانوي علمي</div>
+        <div class="stage-name">الثالث الثانوي علمي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
-      <button class="stage-card" data-stage="ثالثة ثانوي أدبي">
+      <button class="stage-card" data-stage="الثالث الثانوي أدبي">
         <div class="stage-icon">🏆</div>
-        <div class="stage-name">ثالثة ثانوي أدبي</div>
+        <div class="stage-name">الثالث الثانوي أدبي</div>
         <div class="stage-level">المرحلة الثانوية</div>
       </button>
     </div>
@@ -153,10 +153,12 @@
     <div id="stageContent" style="display:none;" class="stage-content">
       <h2 class="stage-section-title" id="stageTitle"></h2>
 
-      <!-- Inner tabs: News / Downloads -->
+      <!-- Inner tabs: News / Downloads / Exams / Results -->
       <div class="stage-tabs">
         <button class="stage-tab active" id="tabNews">📰 الأخبار</button>
-        <button class="stage-tab"        id="tabDl">📥 التحميلات</button>
+        <button class="stage-tab"        id="tabDl">📚 الكتب</button>
+        <button class="stage-tab"        id="tabExams">📝 الامتحانات</button>
+        <button class="stage-tab"        id="tabResults">🏆 النتائج</button>
       </div>
 
       <!-- News panel -->
@@ -166,9 +168,23 @@
         </div>
       </div>
 
-      <!-- Downloads panel -->
+      <!-- Downloads (books) panel -->
       <div id="stageDlPanel" style="display:none;">
         <div class="downloads-grid" id="stageDlGrid">
+          <div class="spinner-wrap"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Exams panel -->
+      <div id="stageExamsPanel" style="display:none;">
+        <div class="downloads-grid" id="stageExamsGrid">
+          <div class="spinner-wrap"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- Results panel -->
+      <div id="stageResultsPanel" style="display:none;">
+        <div class="downloads-grid" id="stageResultsGrid">
           <div class="spinner-wrap"><div class="spinner"></div></div>
         </div>
       </div>
@@ -197,15 +213,15 @@
       <div class="footer-col">
         <h4>المراحل</h4>
         <ul class="footer-links">
-          <li><a href="stages.html?stage=أولى إعدادي">أولى إعدادي</a></li>
-          <li><a href="stages.html?stage=ثانية إعدادي">ثانية إعدادي</a></li>
-          <li><a href="stages.html?stage=ثالثة إعدادي">ثالثة إعدادي</a></li>
-          <li><a href="stages.html?stage=أولى ثانوي علمي">أولى ثانوي علمي</a></li>
-          <li><a href="stages.html?stage=أولى ثانوي أدبي">أولى ثانوي أدبي</a></li>
-          <li><a href="stages.html?stage=ثانية ثانوي علمي">ثانية ثانوي علمي</a></li>
-          <li><a href="stages.html?stage=ثانية ثانوي أدبي">ثانية ثانوي أدبي</a></li>
-          <li><a href="stages.html?stage=ثالثة ثانوي علمي">ثالثة ثانوي علمي</a></li>
-          <li><a href="stages.html?stage=ثالثة ثانوي أدبي">ثالثة ثانوي أدبي</a></li>
+          <li><a href="stages.html?stage=الأول الإعدادي">الأول الإعدادي</a></li>
+          <li><a href="stages.html?stage=الثاني الإعدادي">الثاني الإعدادي</a></li>
+          <li><a href="stages.html?stage=الثالث الإعدادي">الثالث الإعدادي</a></li>
+          <li><a href="stages.html?stage=الأول الثانوي علمي">الأول الثانوي علمي</a></li>
+          <li><a href="stages.html?stage=الأول الثانوي أدبي">الأول الثانوي أدبي</a></li>
+          <li><a href="stages.html?stage=الثاني الثانوي علمي">الثاني الثانوي علمي</a></li>
+          <li><a href="stages.html?stage=الثاني الثانوي أدبي">الثاني الثانوي أدبي</a></li>
+          <li><a href="stages.html?stage=الثالث الثانوي علمي">الثالث الثانوي علمي</a></li>
+          <li><a href="stages.html?stage=الثالث الثانوي أدبي">الثالث الثانوي أدبي</a></li>
         </ul>
       </div>
     </div>
@@ -247,9 +263,10 @@
     // Scroll to content
     setTimeout(() => document.getElementById('stageContent').scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
 
-    // Load news & downloads
+    // Load news + whichever tab is currently active
     loadStageNews();
-    loadStageDl();
+    const activeTabId = Object.keys(stageTabs).find(id => document.getElementById(id).classList.contains('active')) || 'tabDl';
+    stageTabs[activeTabId === 'tabNews' ? 'tabDl' : activeTabId].load();
   }
 
   async function loadStageNews() {
@@ -264,17 +281,21 @@
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
   }
 
-  async function loadStageDl() {
-    const grid = document.getElementById('stageDlGrid');
+  async function loadStageDlByType(type, gridId, emptyLabel) {
+    const grid = document.getElementById(gridId);
     grid.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
-    const items = await getDownloads({ stage: activeStage });
+    const items = await getDownloads({ stage: activeStage, type });
     if (!items.length) {
-      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📁</div><h3>لا توجد تحميلات لهذه المرحلة</h3></div>';
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="icon">📁</div><h3>${emptyLabel}</h3></div>`;
       return;
     }
     grid.innerHTML = items.map(d => buildDlCard(d)).join('');
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
   }
+
+  const loadStageDl      = () => loadStageDlByType('books',   'stageDlGrid',      'لا توجد كتب لهذه المرحلة');
+  const loadStageExams   = () => loadStageDlByType('exams',   'stageExamsGrid',   'لا توجد امتحانات لهذه المرحلة');
+  const loadStageResults = () => loadStageDlByType('results', 'stageResultsGrid', 'لا توجد نتائج لهذه المرحلة');
 
   // Stage card clicks
   document.getElementById('stagesGrid').addEventListener('click', e => {
@@ -283,17 +304,20 @@
   });
 
   // Inner tabs
-  document.getElementById('tabNews').addEventListener('click', () => {
-    document.getElementById('tabNews').classList.add('active');
-    document.getElementById('tabDl').classList.remove('active');
-    document.getElementById('stageNewsPanel').style.display = 'block';
-    document.getElementById('stageDlPanel').style.display = 'none';
-  });
-  document.getElementById('tabDl').addEventListener('click', () => {
-    document.getElementById('tabDl').classList.add('active');
-    document.getElementById('tabNews').classList.remove('active');
-    document.getElementById('stageDlPanel').style.display = 'block';
-    document.getElementById('stageNewsPanel').style.display = 'none';
+  const stageTabs = {
+    tabNews:    { panel: 'stageNewsPanel',    loaded: false, load: () => {} },
+    tabDl:      { panel: 'stageDlPanel',      loaded: false, load: loadStageDl },
+    tabExams:   { panel: 'stageExamsPanel',   loaded: false, load: loadStageExams },
+    tabResults: { panel: 'stageResultsPanel', loaded: false, load: loadStageResults }
+  };
+  Object.keys(stageTabs).forEach(tabId => {
+    document.getElementById(tabId).addEventListener('click', () => {
+      Object.keys(stageTabs).forEach(otherId => {
+        document.getElementById(otherId).classList.toggle('active', otherId === tabId);
+        document.getElementById(stageTabs[otherId].panel).style.display = otherId === tabId ? 'block' : 'none';
+      });
+      stageTabs[tabId].load();
+    });
   });
 
   // Pre-select from URL
