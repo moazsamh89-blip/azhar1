@@ -293,9 +293,43 @@
     grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
   }
 
-  const loadStageDl      = () => loadStageDlByType('books',   'stageDlGrid',      'لا توجد كتب لهذه المرحلة');
-  const loadStageExams   = () => loadStageDlByType('exams',   'stageExamsGrid',   'لا توجد امتحانات لهذه المرحلة');
-  const loadStageResults = () => loadStageDlByType('results', 'stageResultsGrid', 'لا توجد نتائج لهذه المرحلة');
+  const loadStageDl = () => loadStageDlByType('books', 'stageDlGrid', 'لا توجد كتب لهذه المرحلة');
+
+  // Exams can be added either from "التحميلات" (downloads, type=exams, has a
+  // file) or from "الأخبار" (news, category=امتحانات, e.g. an announcement
+  // with a photo of a schedule). This tab shows both, merged together.
+  async function loadStageExams() {
+    const grid = document.getElementById('stageExamsGrid');
+    grid.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+    const [dlItems, newsItems] = await Promise.all([
+      getDownloads({ stage: activeStage, type: 'exams' }),
+      getNews({ stage: activeStage, category: 'امتحانات' })
+    ]);
+    if (!dlItems.length && !newsItems.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📁</div><h3>لا توجد امتحانات لهذه المرحلة</h3></div>';
+      return;
+    }
+    grid.innerHTML = dlItems.map(d => buildDlCard(d)).join('') + newsItems.map(n => buildNewsCard(n)).join('');
+    grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+  }
+
+  // Results, same idea as exams: merge "التحميلات" (downloads, type=results,
+  // has a file) with "الأخبار" (news, category=نتائج, e.g. a results
+  // announcement post) so nothing posted from either place gets missed.
+  async function loadStageResults() {
+    const grid = document.getElementById('stageResultsGrid');
+    grid.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div></div>';
+    const [dlItems, newsItems] = await Promise.all([
+      getDownloads({ stage: activeStage, type: 'results' }),
+      getNews({ stage: activeStage, category: 'نتائج' })
+    ]);
+    if (!dlItems.length && !newsItems.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📁</div><h3>لا توجد نتائج لهذه المرحلة</h3></div>';
+      return;
+    }
+    grid.innerHTML = dlItems.map(d => buildDlCard(d)).join('') + newsItems.map(n => buildNewsCard(n)).join('');
+    grid.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', handleLbClick));
+  }
 
   // Stage card clicks
   document.getElementById('stagesGrid').addEventListener('click', e => {
