@@ -35,6 +35,37 @@ onAuthStateChange((event, session) => {
   }
 });
 
+// ─── Force logout everywhere when the password changes ───
+// If the admin password gets changed (from this tab or any other tab/
+// device), every other open session should stop working and be sent back
+// to the login screen automatically instead of silently keeping the old
+// (now-invalid) session alive.
+let _sessionWatchInterval = null;
+
+async function runSessionWatch() {
+  const user = await getCurrentUser();
+  if (!user) return;
+  await watchSessionVersion();
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') runSessionWatch();
+});
+window.addEventListener('focus', runSessionWatch);
+
+// Same-browser tabs get notified instantly: signOut()/bumpSessionVersion()
+// write to localStorage, which fires a 'storage' event in every *other* tab.
+window.addEventListener('storage', e => {
+  if (e.key === 'azhar_admin_session_version' || e.key === 'azhar_admin_session') {
+    runSessionWatch();
+  }
+});
+
+// Other devices are caught by periodic polling.
+if (!_sessionWatchInterval) {
+  _sessionWatchInterval = setInterval(runSessionWatch, 20000);
+}
+
 document.getElementById('loginForm')?.addEventListener('submit', async e => {
   e.preventDefault();
   const email    = document.getElementById('loginEmail').value.trim();
@@ -95,7 +126,7 @@ async function loadNewsPanel() {
   }
   tbody.innerHTML = news.map(n => {
     const images = parseImages(n.image);
-    const thumb  = images.length ? `<img src="${getDriveImageUrl(images[0])}" alt="صورة" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.src=''" />` : '—';
+    const thumb  = images.length ? `<img src="${getDriveImageUrl(images[0])}" alt="صورة" referrerpolicy="no-referrer" onerror="this.src=''" />` : '—';
     return `<tr>
       <td>${thumb}</td>
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escAdm(n.title)}</td>
@@ -135,7 +166,7 @@ function renderNewsImageInputs(urls = ['']) {
       <button type="button" class="btn btn-danger btn-sm" onclick="removeImgRow(${i})" title="حذف">✕</button>
     </div>
     <div id="imgPreview${i}" class="img-preview" style="margin-bottom:.5rem;">
-      ${url ? `<img src="${getDriveImageUrl(url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" />` : ''}
+      ${url ? `<img src="${getDriveImageUrl(url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer" onerror="this.style.display='none'" />` : ''}
     </div>`).join('');
 }
 
@@ -144,7 +175,7 @@ function previewNewsImg(input, index) {
   const prev = document.getElementById('imgPreview' + index);
   if (!prev) return;
   if (url) {
-    prev.innerHTML = `<img src="${getDriveImageUrl(url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" />`;
+    prev.innerHTML = `<img src="${getDriveImageUrl(url)}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;" referrerpolicy="no-referrer" onerror="this.style.display='none'" />`;
   } else {
     prev.innerHTML = '';
   }
@@ -232,7 +263,7 @@ async function loadDlPanel() {
   tbody.innerHTML = items.map(d => {
     const isImg = isImageUrl(d.file_url);
     const thumb = isImg
-      ? `<img src="${getDriveImageUrl(d.file_url)}" alt="صورة" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" />`
+      ? `<img src="${getDriveImageUrl(d.file_url)}" alt="صورة" referrerpolicy="no-referrer" onerror="this.style.display='none'" />`
       : `<span style="font-size:1.5rem;">📄</span>`;
     return `<tr>
       <td>${thumb}</td>
@@ -266,7 +297,7 @@ function updateDlPreview(url) {
   const prev = document.getElementById('dlPreviewArea');
   if (!url) { prev.innerHTML = ''; return; }
   if (isImageUrl(url)) {
-    prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" alt="معاينة" />`;
+    prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" referrerpolicy="no-referrer" onerror="this.style.display='none'" alt="معاينة" />`;
   } else {
     prev.innerHTML = `<div style="padding:1rem;background:#FEE2E2;border-radius:8px;color:#DC2626;display:flex;align-items:center;gap:.5rem;">📄 ملف PDF – <a href="${getDriveOpenUrl(url)}" target="_blank" rel="noopener">فتح في Google Drive</a></div>`;
   }
@@ -349,7 +380,7 @@ async function loadSheikhPanel() {
 function updateSheikhImgPreview(url) {
   const prev = document.getElementById('sheikhImgPreview');
   if (!url) { prev.innerHTML = ''; return; }
-  prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" style="max-height:200px;width:auto;" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" alt="معاينة صورة الشيخ" />`;
+  prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" style="max-height:200px;width:auto;" referrerpolicy="no-referrer" onerror="this.style.display='none'" alt="معاينة صورة الشيخ" />`;
 }
 
 document.getElementById('sheikhImgInput')?.addEventListener('input', e => updateSheikhImgPreview(e.target.value.trim()));
@@ -453,7 +484,7 @@ async function loadLogoPanel() {
 function updateLogoPreview(url) {
   const prev = document.getElementById('logoPreview');
   if (!url) { prev.innerHTML = ''; return; }
-  prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" style="max-height:120px;width:120px;object-fit:cover;border-radius:50%;border:3px solid var(--gold);box-shadow:0 4px 12px rgba(0,0,0,0.15);background:#fff;padding:4px;" referrerpolicy="no-referrer" crossorigin="anonymous" onerror="this.style.display='none'" alt="معاينة اللوجو" />`;
+  prev.innerHTML = `<img src="${getDriveImageUrl(url)}" class="img-preview-single" style="max-height:120px;width:120px;object-fit:cover;border-radius:50%;border:3px solid var(--gold);box-shadow:0 4px 12px rgba(0,0,0,0.15);background:#fff;padding:4px;" referrerpolicy="no-referrer" onerror="this.style.display='none'" alt="معاينة اللوجو" />`;
 }
 
 document.getElementById('logoUrlInput')?.addEventListener('input', e => updateLogoPreview(e.target.value.trim()));
@@ -551,7 +582,7 @@ document.getElementById('securityForm')?.addEventListener('submit', async e => {
   try {
     const currentUser = await getCurrentUser();
     await changeAdminCredentials(currentUser.email, currentPass, emailInput.value.trim(), newPass);
-    showAdminAlert('تم تغيير بيانات الدخول بنجاح ✅', 'success');
+    showAdminAlert('تم تغيير بيانات الدخول بنجاح ✅ سيتم تسجيل خروج أي جلسة أخرى مفتوحة في لوحة التحكم تلقائيًا', 'success');
 
     // Clear inputs
     document.getElementById('currentPasswordInput').value = '';
